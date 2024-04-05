@@ -1,3 +1,5 @@
-# Blog App
+![Dash Blog App](README/Dash%20Blog%20App.png)
 
-Clean architecture Flutter blog app using Supabase, BLoC, Hive, Get_It and FpDart.
+# Dash Blog
+
+Fullstack Flutter Blog App with state management using Supabase and BLoC.
