@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:blog_app/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:blog_app/core/common/widgets/loader.dart';
+import 'package:blog_app/core/constants/constants.dart';
 import 'package:blog_app/core/theme/app_pallete.dart';
 import 'package:blog_app/core/utils/pick_image.dart';
 import 'package:blog_app/core/utils/show_snackbar.dart';
@@ -9,9 +11,13 @@ import 'package:blog_app/features/blog/presentation/pages/blog_page.dart';
 import 'package:blog_app/features/blog/presentation/widgets/blog_editor.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddNewBlogPage extends StatefulWidget {
+  static route() => MaterialPageRoute(
+        builder: (context) => const AddNewBlogPage(),
+      );
   const AddNewBlogPage({super.key});
 
   @override
@@ -27,7 +33,6 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
 
   void selectImage() async {
     final pickedImage = await pickImage();
-
     if (pickedImage != null) {
       setState(() {
         image = pickedImage;
@@ -64,31 +69,23 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppPallete.backgroundColor,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 5),
-            child: IconButton(
-              onPressed: () {
-                uploadBlog();
-              },
-              icon: const Icon(
-                Icons.done_rounded,
-              ),
-            ),
+          IconButton(
+            onPressed: () {
+              uploadBlog();
+            },
+            icon: const Icon(Icons.done_rounded),
           ),
         ],
       ),
       body: BlocConsumer<BlogBloc, BlogState>(
         listener: (context, state) {
-          if (state is BlogFaliure) {
+          if (state is BlogFailure) {
             showSnackBar(context, state.error);
-          } else if (state is BlogSuccess) {
+          } else if (state is BlogUploadSuccess) {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                builder: (context) => const BlogPage(),
-              ),
+              BlogPage.route(),
               (route) => false,
             );
           }
@@ -97,9 +94,10 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
           if (state is BlogLoading) {
             return const Loader();
           }
+
           return SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(16.0),
               child: Form(
                 key: formKey,
                 child: Column(
@@ -108,8 +106,8 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                         ? GestureDetector(
                             onTap: selectImage,
                             child: SizedBox(
-                              height: 150,
                               width: double.infinity,
+                              height: 150,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.file(
@@ -126,24 +124,22 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                             child: DottedBorder(
                               color: AppPallete.borderColor,
                               dashPattern: const [10, 4],
-                              borderType: BorderType.RRect,
                               radius: const Radius.circular(10),
+                              borderType: BorderType.RRect,
                               strokeCap: StrokeCap.round,
-                              child: const SizedBox(
+                              child: Container(
                                 height: 150,
                                 width: double.infinity,
-                                child: Column(
+                                child: const Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.folder_open,
                                       size: 40,
                                     ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
+                                    SizedBox(height: 15),
                                     Text(
-                                      "Select your image",
+                                      'Select your image',
                                       style: TextStyle(
                                         fontSize: 15,
                                       ),
@@ -153,22 +149,14 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                               ),
                             ),
                           ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: [
-                          'Technology',
-                          'Business',
-                          'Programming',
-                          'Entertainment',
-                        ]
+                        children: Constants.topics
                             .map(
                               (e) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
+                                padding: const EdgeInsets.all(5.0),
                                 child: GestureDetector(
                                   onTap: () {
                                     if (selectedTopics.contains(e)) {
@@ -182,12 +170,14 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                                     label: Text(e),
                                     color: selectedTopics.contains(e)
                                         ? const MaterialStatePropertyAll(
-                                            AppPallete.gradient1)
+                                            AppPallete.gradient1,
+                                          )
                                         : null,
                                     side: selectedTopics.contains(e)
                                         ? null
                                         : const BorderSide(
-                                            color: AppPallete.borderColor),
+                                            color: AppPallete.borderColor,
+                                          ),
                                   ),
                                 ),
                               ),
@@ -195,13 +185,16 @@ class _AddNewBlogPageState extends State<AddNewBlogPage> {
                             .toList(),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    BlogEditor(
-                        controller: titleController, hintText: 'Blog Title'),
                     const SizedBox(height: 10),
                     BlogEditor(
-                        controller: contentController,
-                        hintText: 'Blog Content'),
+                      controller: titleController,
+                      hintText: 'Blog title',
+                    ),
+                    const SizedBox(height: 10),
+                    BlogEditor(
+                      controller: contentController,
+                      hintText: 'Blog content',
+                    ),
                   ],
                 ),
               ),

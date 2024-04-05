@@ -14,22 +14,21 @@ void main() async {
   await initDependencies();
   runApp(
     DevicePreview(
-      enabled: true,
-      builder: (context) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) => serviceLocator<AppUserCubit>(),
-          ),
-          BlocProvider(
-            create: (_) => serviceLocator<AuthBloc>(),
-          ),
-          BlocProvider(
-            create: (_) => serviceLocator<BlogBloc>(),
-          ),
-        ],
-        child: const MyApp(),
-      ),
-    ),
+        enabled: true,
+        builder: (context) => MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (_) => serviceLocator<AppUserCubit>(),
+                ),
+                BlocProvider(
+                  create: (_) => serviceLocator<AuthBloc>(),
+                ),
+                BlocProvider(
+                  create: (_) => serviceLocator<BlogBloc>(),
+                ),
+              ],
+              child: const MyApp(),
+            )),
   );
 }
 
@@ -51,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Blog App',
       theme: AppTheme.darkThemeMode,
       home: BlocSelector<AppUserCubit, AppUserState, bool>(
         selector: (state) {

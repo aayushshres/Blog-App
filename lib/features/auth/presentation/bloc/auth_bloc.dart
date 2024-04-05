@@ -36,13 +36,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final res = await _currentUser(NoParams());
+
     res.fold(
-      (l) => emit(AuthFaliure(l.message)),
+      (l) => emit(AuthFailure(l.message)),
       (r) => _emitAuthSuccess(r, emit),
     );
   }
 
-  void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
+  void _onAuthSignUp(
+    AuthSignUp event,
+    Emitter<AuthState> emit,
+  ) async {
     final res = await _userSignUp(
       UserSignUpParams(
         email: event.email,
@@ -50,13 +54,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         name: event.name,
       ),
     );
+
     res.fold(
-      (faliure) => emit(AuthFaliure(faliure.message)),
+      (failure) => emit(AuthFailure(failure.message)),
       (user) => _emitAuthSuccess(user, emit),
     );
   }
 
-  void _onAuthLogin(AuthLogin event, Emitter<AuthState> emit) async {
+  void _onAuthLogin(
+    AuthLogin event,
+    Emitter<AuthState> emit,
+  ) async {
     final res = await _userLogin(
       UserLoginParams(
         email: event.email,
@@ -65,12 +73,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     res.fold(
-      (l) => emit(AuthFaliure(l.message)),
+      (l) => emit(AuthFailure(l.message)),
       (r) => _emitAuthSuccess(r, emit),
     );
   }
 
-  void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
+  void _emitAuthSuccess(
+    User user,
+    Emitter<AuthState> emit,
+  ) {
     _appUserCubit.updateUser(user);
     emit(AuthSuccess(user));
   }
