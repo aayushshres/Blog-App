@@ -50,6 +50,8 @@ class BlogCard extends StatelessWidget {
                 ),
                 Text(
                   blog.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
