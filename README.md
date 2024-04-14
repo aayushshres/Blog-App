@@ -1,4 +1,4 @@
-![Dash Blog App](README/Dash%20Blog%20App.png)
+![thumbnail](thumbnail.png)
 
 # Dash Blog
 
